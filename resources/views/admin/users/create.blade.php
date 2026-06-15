@@ -6,22 +6,22 @@
 
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">NIP / NIM <span class="text-danger">*</span></label>
-                    <input type="text" name="identity" value="{{ old('identity') }}" required
+                    <label class="form-label fw-semibold" for="identity">NIP / NIM <span class="text-danger">*</span></label>
+                    <input type="text" name="identity" id="identity" value="{{ old('identity') }}" required
                            class="form-control @error('identity') is-invalid @enderror" placeholder="Nomor identitas...">
                     @error('identity')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
-                    <input type="text" name="name" value="{{ old('name') }}" required
+                    <label class="form-label fw-semibold" for="name">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
                            class="form-control @error('name') is-invalid @enderror" placeholder="Masukkan nama lengkap...">
                     @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 @if(request('role') !== 'mahasiswa')
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Inisial Nama <small class="text-muted fw-normal">(opsional)</small></label>
+                    <label class="form-label fw-semibold" for="initials">Inisial Nama <small class="text-muted fw-normal">(opsional)</small></label>
                     <input type="text" name="initials" id="initials" value="{{ old('initials') }}" maxlength="20"
                            class="form-control text-uppercase @error('initials') is-invalid @enderror" style="font-family:monospace;" placeholder="Contoh: JDS">
                     <div class="form-text">Maksimal 20 karakter.</div>
@@ -30,8 +30,8 @@
                 @endif
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="email" value="{{ old('email') }}" required
+                    <label class="form-label fw-semibold" for="email">Email <span class="text-danger">*</span></label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" required
                            class="form-control @error('email') is-invalid @enderror" placeholder="contoh@email.com">
                     @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
@@ -40,7 +40,7 @@
 
                 {{-- ── Jurusan ── --}}
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Jurusan</label>
+                    <label class="form-label fw-semibold" for="jurusan_id">Jurusan</label>
                     <select name="jurusan_id" id="jurusan_id"
                             class="form-select @error('jurusan_id') is-invalid @enderror">
                         <option value="">— Pilih Jurusan —</option>
@@ -59,7 +59,7 @@
                 @endphp
                 @if($roleButuhProdi)
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">
+                    <label class="form-label fw-semibold" for="program_studi_id">
                         Program Studi
                         @if(in_array(request('role'), ['kaprodi','kajur','dosen','mahasiswa']))
                             <span class="text-danger">*</span>
@@ -77,8 +77,8 @@
 
                 @if(request('role') === 'mahasiswa')
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Konsentrasi <span class="text-danger">*</span></label>
-                    <select name="konsentrasi" required
+                    <label class="form-label fw-semibold" for="konsentrasi">Konsentrasi <span class="text-danger">*</span></label>
+                    <select name="konsentrasi" id="konsentrasi" required
                             class="form-select @error('konsentrasi') is-invalid @enderror">
                         <option value="" disabled {{ old('konsentrasi') ? '' : 'selected' }}>Pilih konsentrasi...</option>
                         <option value="RPL" {{ old('konsentrasi') === 'RPL' ? 'selected' : '' }}>RPL — Rekayasa Perangkat Lunak</option>
@@ -156,12 +156,10 @@
 
             jurusanSel.addEventListener('change', () => loadProdi(jurusanSel.value));
 
-            // Jika ada old value (form validation error), atau admin_jurusan (jurusan sudah terpilih otomatis), pre-load prodi
             const initJurusan = jurusanSel.value;
             if (initJurusan) {
                 loadProdi(initJurusan, oldProdiId);
             } else if (jurusanSel.options.length === 2) {
-                // Hanya satu pilihan jurusan (selain placeholder) → auto-select dan load prodi
                 jurusanSel.selectedIndex = 1;
                 loadProdi(jurusanSel.value, oldProdiId);
             }
