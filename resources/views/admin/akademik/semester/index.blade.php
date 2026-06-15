@@ -12,9 +12,14 @@
 
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Periode <span class="text-danger">*</span></label>
-                    <select name="periode" required
-                            class="form-select @error('periode') is-invalid @enderror">
+                <label for="periode" class="form-label fw-semibold">
+                    Periode <span class="text-danger">*</span>
+                </label>
+
+                <select id="periode"
+                        name="periode"
+                        required
+                        class="form-select @error('periode') is-invalid @enderror">
                         <option value="ganjil" {{ old('periode', $semester->periode) === 'ganjil' ? 'selected' : '' }}>Ganjil</option>
                         <option value="genap"  {{ old('periode', $semester->periode) === 'genap'  ? 'selected' : '' }}>Genap</option>
                     </select>
@@ -22,27 +27,48 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Tahun Ajaran <span class="text-danger">*</span></label>
-                    <input type="text" name="tahun_ajaran" value="{{ old('tahun_ajaran', $semester->tahun_ajaran) }}"
-                           required pattern="\d{4}/\d{4}" placeholder="2025/2026"
-                           class="form-control @error('tahun_ajaran') is-invalid @enderror" style="font-family:monospace;">
+                <label for="tahun_ajaran" class="form-label fw-semibold">
+                    Tahun Ajaran <span class="text-danger">*</span>
+                </label>
+
+                <input type="text"
+                    id="tahun_ajaran"
+                    name="tahun_ajaran"
+                    value="{{ old('tahun_ajaran', $semester->tahun_ajaran) }}"
+                    required
+                    pattern="\d{4}/\d{4}"
+                    placeholder="2025/2026"
+                    class="form-control @error('tahun_ajaran') is-invalid @enderror"
+                    style="font-family:monospace;">
                     @error('tahun_ajaran')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Tanggal Mulai <span class="text-danger">*</span></label>
-                    <input type="date" name="tanggal_mulai"
-                           value="{{ old('tanggal_mulai', $semester->tanggal_mulai->format('Y-m-d')) }}"
-                           required class="form-control @error('tanggal_mulai') is-invalid @enderror">
+                <label for="tanggal_mulai" class="form-label fw-semibold">
+                    Tanggal Mulai <span class="text-danger">*</span>
+                </label>
+
+                <input type="date"
+                    id="tanggal_mulai"
+                    name="tanggal_mulai"
+                    value="{{ old('tanggal_mulai', $semester->tanggal_mulai->format('Y-m-d')) }}"
+                    required
+                    class="form-control @error('tanggal_mulai') is-invalid @enderror">
                     <div class="form-text">Format tampilan: DD/MM/YYYY (input pakai picker browser).</div>
                     @error('tanggal_mulai')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold">Tanggal Selesai <span class="text-danger">*</span></label>
-                    <input type="date" name="tanggal_selesai"
-                           value="{{ old('tanggal_selesai', $semester->tanggal_selesai->format('Y-m-d')) }}"
-                           required class="form-control @error('tanggal_selesai') is-invalid @enderror">
+                <label for="tanggal_selesai" class="form-label fw-semibold">
+                    Tanggal Selesai <span class="text-danger">*</span>
+                </label>
+
+                <input type="date"
+                    id="tanggal_selesai"
+                    name="tanggal_selesai"
+                    value="{{ old('tanggal_selesai', $semester->tanggal_selesai->format('Y-m-d')) }}"
+                    required
+                    class="form-control @error('tanggal_selesai') is-invalid @enderror">
                     @error('tanggal_selesai')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
