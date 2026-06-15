@@ -53,21 +53,52 @@
                                     <div class="border rounded" style="aspect-ratio:16/9; background:url('{{ $slide->image_url }}') center/cover no-repeat var(--obe-bg);"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Ganti Gambar <small class="text-muted fw-normal">(opsional, max 4MB)</small></label>
-                                    <input type="file" name="image" accept="image/*" class="form-control">
+                                    <label for="image_{{ $slide->id }}" class="form-label fw-semibold">
+                                        Ganti Gambar
+                                        <small class="text-muted fw-normal">(opsional, max 4MB)</small>
+                                    </label>
+
+                                    <input type="file"
+                                        id="image_{{ $slide->id }}"
+                                        name="image"
+                                        accept="image/*"
+                                        class="form-control">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Judul</label>
-                                    <input type="text" name="title" value="{{ $slide->title }}" maxlength="255" class="form-control">
+                                    <label for="title_{{ $slide->id }}" class="form-label fw-semibold">
+                                        Judul
+                                    </label>
+
+                                    <input type="text"
+                                        id="title_{{ $slide->id }}"
+                                        name="title"
+                                        value="{{ $slide->title }}"
+                                        maxlength="255"
+                                        class="form-control">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">Caption</label>
-                                    <textarea name="caption" rows="2" maxlength="500" class="form-control">{{ $slide->caption }}</textarea>
+                                    <label for="caption_{{ $slide->id }}" class="form-label fw-semibold">
+                                        Caption
+                                    </label>
+
+                                    <textarea id="caption_{{ $slide->id }}"
+                                            name="caption"
+                                            rows="2"
+                                            maxlength="500"
+                                            class="form-control">{{ $slide->caption }}</textarea>
                                 </div>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <label class="form-label fw-semibold">Urutan</label>
-                                        <input type="number" name="sort_order" min="0" value="{{ $slide->sort_order }}" class="form-control">
+                                        <label for="sort_order_{{ $slide->id }}" class="form-label fw-semibold">
+                                            Urutan
+                                        </label>
+
+                                        <input type="number"
+                                            id="sort_order_{{ $slide->id }}"
+                                            name="sort_order"
+                                            min="0"
+                                            value="{{ $slide->sort_order }}"
+                                            class="form-control">
                                     </div>
                                     <div class="col-6 d-flex align-items-end">
                                         <div class="form-check">
@@ -108,22 +139,52 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Gambar <span class="text-danger">*</span></label>
-                            <input type="file" name="image" accept="image/*" required class="form-control">
+                            <label for="image" class="form-label fw-semibold">
+                                Gambar <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="file"
+                                id="image"
+                                name="image"
+                                accept="image/*"
+                                required
+                                class="form-control">
                             <div class="form-text">Disarankan rasio 16:9 atau landscape, maksimal 4MB.</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Judul</label>
-                            <input type="text" name="title" maxlength="255" class="form-control">
+                            <label for="title" class="form-label fw-semibold">
+                                Judul
+                            </label>
+
+                            <input type="text"
+                                id="title"
+                                name="title"
+                                maxlength="255"
+                                class="form-control">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Caption</label>
-                            <textarea name="caption" rows="2" maxlength="500" class="form-control"></textarea>
+                            <label for="caption" class="form-label fw-semibold">
+                                Caption
+                            </label>
+
+                            <textarea id="caption"
+                                    name="caption"
+                                    rows="2"
+                                    maxlength="500"
+                                    class="form-control"></textarea>
                         </div>
                         <div class="row g-2">
                             <div class="col-6">
-                                <label class="form-label fw-semibold">Urutan</label>
-                                <input type="number" name="sort_order" min="0" value="0" class="form-control">
+                                <label for="sort_order" class="form-label fw-semibold">
+                                    Urutan
+                                </label>
+
+                                <input type="number"
+                                    id="sort_order"
+                                    name="sort_order"
+                                    min="0"
+                                    value="0"
+                                    class="form-control">
                             </div>
                             <div class="col-6 d-flex align-items-end">
                                 <div class="form-check">
