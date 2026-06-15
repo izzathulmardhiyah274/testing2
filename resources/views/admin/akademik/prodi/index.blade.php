@@ -77,18 +77,32 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold">Kode</label>
-                                                <input type="text" name="kode" value="{{ old('kode', $row->kode) }}" maxlength="20"
-                                                       class="form-control text-uppercase" style="font-family:monospace;">
+                                                <label for="kode_{{ $row->id }}" class="form-label fw-semibold">Kode</label>
+                                                <input type="text"
+                                                    id="kode_{{ $row->id }}"
+                                                    name="kode"
+                                                    value="{{ old('kode', $row->kode) }}"
+                                                    maxlength="20"
+                                                    class="form-control text-uppercase"
+                                                    style="font-family:monospace;">
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold">Nama Program Studi <span class="text-danger">*</span></label>
-                                                <input type="text" name="nama_prodi" value="{{ old('nama_prodi', $row->nama_prodi) }}" required maxlength="150"
-                                                       class="form-control">
+                                                <label for="nama_prodi_{{ $row->id }}" class="form-label fw-semibold">
+                                                    Nama Program Studi <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text"
+                                                    id="nama_prodi_{{ $row->id }}"
+                                                    name="nama_prodi"
+                                                    value="{{ old('nama_prodi', $row->nama_prodi) }}"
+                                                    required
+                                                    maxlength="150"
+                                                    class="form-control">
                                             </div>
                                             <div class="mb-0">
-                                                <label class="form-label fw-semibold">Jurusan</label>
-                                                <select name="jurusan_id" class="form-select">
+                                                <label for="jurusan_id_{{ $row->id }}" class="form-label fw-semibold">Jurusan</label>
+                                                <select id="jurusan_id_{{ $row->id }}"
+                                                        name="jurusan_id"
+                                                        class="form-select">
                                                     <option value="">— Pilih Jurusan —</option>
                                                     @foreach($jurusan as $j)
                                                         <option value="{{ $j->id }}"
@@ -128,22 +142,36 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Kode</label>
-                            <input type="text" name="kode" value="{{ old('kode') }}" maxlength="20"
-                                   class="form-control text-uppercase @error('kode') is-invalid @enderror"
-                                   style="font-family:monospace;" placeholder="Contoh: PSTI">
+                            <label for="kode" class="form-label fw-semibold">Kode</label>
+                            <input type="text"
+                                id="kode"
+                                name="kode"
+                                value="{{ old('kode') }}"
+                                maxlength="20"
+                                class="form-control text-uppercase @error('kode') is-invalid @enderror"
+                                style="font-family:monospace;"
+                                placeholder="Contoh: PSTI">
                             @error('kode')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Nama Program Studi <span class="text-danger">*</span></label>
-                            <input type="text" name="nama_prodi" value="{{ old('nama_prodi') }}" required maxlength="150"
-                                   class="form-control @error('nama_prodi') is-invalid @enderror"
-                                   placeholder="Contoh: Teknik Informatika">
+                            <label for="nama_prodi" class="form-label fw-semibold">
+                                Nama Program Studi <span class="text-danger">*</span>
+                            </label>
+                            <input type="text"
+                                id="nama_prodi"
+                                name="nama_prodi"
+                                value="{{ old('nama_prodi') }}"
+                                required
+                                maxlength="150"
+                                class="form-control @error('nama_prodi') is-invalid @enderror"
+                                placeholder="Contoh: Teknik Informatika">
                             @error('nama_prodi')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-0">
-                            <label class="form-label fw-semibold">Jurusan</label>
-                            <select name="jurusan_id" class="form-select @error('jurusan_id') is-invalid @enderror">
+                            <label for="jurusan_id" class="form-label fw-semibold">Jurusan</label>
+                            <select id="jurusan_id"
+                                    name="jurusan_id"
+                                    class="form-select @error('jurusan_id') is-invalid @enderror">
                                 <option value="">— Pilih Jurusan —</option>
                                 @foreach($jurusan as $j)
                                     <option value="{{ $j->id }}" {{ old('jurusan_id') == $j->id ? 'selected' : '' }}>
