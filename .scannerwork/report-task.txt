@@ -1,0 +1,7 @@
+organization=izzathulmardhiyah274
+projectKey=izzathulmardhiyah274_testing2
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.94954
+dashboardUrl=https://sonarcloud.io/dashboard?id=izzathulmardhiyah274_testing2
+ceTaskId=AZ8pbkTGt4u17BHSL9US
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZ8pbkTGt4u17BHSL9US

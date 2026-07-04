@@ -518,15 +518,13 @@ class DosenController extends Controller
         ]);
     }
 
-    /**
+   /**
      * Hasilkan nilai mentah (skala 0–100) per kategori SATU UNRI yang—setelah
      * dikalikan bobotnya—berjumlah tepat = $finalScore. Tujuannya agar tiap
-     * kategori tampil pada skala penuh (mis. presensi 100 bila sempurna), bukan
-     * kontribusi kecilnya (5), sementara nilai akhir tetap sesuai bobot.
+     * kategori tampil pada skala penuh, sementara nilai akhir tetap sesuai bobot.
      *
-     * Nilai dibuat acak namun konsisten per mahasiswa (di-seed dari id), lalu
-     * digeser dengan konstanta agar rata-rata tertimbangnya tepat = $finalScore
-     * (valid karena total bobot = 100). Kategori berbobot 0 dikosongkan.
+     * Nilai dibuat deterministik per mahasiswa (berbasis hash) tanpa memakai
+     * mt_rand()/mt_srand() yang ditandai Sonar sebagai PRNG tidak aman.
      *
      * @param  array<string, float>  $weights  bobot persen per kategori (jumlah 100)
      * @return array<string, float|string> nilai mentah per kategori ('' bila bobot 0)
@@ -541,38 +539,50 @@ class DosenController extends Controller
             return $out;
         }
 
-        mt_srand($seed);
-
-        // Sebaran menyempit di dekat 0/100 agar nilai acak tetap dalam [0,100]
-        // tanpa clamp — sehingga rata-rata tertimbang bisa tepat = $finalScore.
+        // Sebaran menyempit di dekat 0/100 agar hasil tetap realistis
+        // dan koreksi akhir tidak terlalu besar.
         $spread = max(0.0, min(8.0, $finalScore, 100.0 - $finalScore));
+
         $raw = [];
+
         foreach (array_keys($active) as $key) {
-            $raw[$key] = $finalScore + (mt_rand(-100, 100) / 100) * $spread;
+            // Deterministik per mahasiswa + kategori, hasil 0..1
+            $hash = hash('sha256', $seed . '|' . $key);
+            $portion = hexdec(substr($hash, 0, 8)) / 0xFFFFFFFF; // 0..1
+
+            // Ubah ke rentang -1..1
+            $offset = ($portion * 2) - 1;
+
+            $raw[$key] = $finalScore + ($offset * $spread);
         }
 
+        // Hitung rata-rata tertimbang awal
         $weightedMean = 0.0;
         foreach ($active as $key => $w) {
             $weightedMean += $raw[$key] * $w / $totalWeight;
         }
+
+        // Geser semua nilai agar rata-rata tertimbang tepat ke finalScore
         $shift = $finalScore - $weightedMean;
         foreach ($active as $key => $w) {
             $raw[$key] = max(0.0, min(100.0, round($raw[$key] + $shift, 2)));
         }
 
-        // Koreksi sisa akibat clamp/pembulatan → bebankan ke kategori bobot terbesar.
+        // Koreksi residual akibat clamp/pembulatan ke kategori dengan bobot terbesar
         $achieved = 0.0;
         foreach ($active as $key => $w) {
             $achieved += $raw[$key] * $w / $totalWeight;
         }
+
         $residual = $finalScore - $achieved;
         if (abs($residual) > 0.001) {
             $heaviest = array_keys($active, max($active))[0];
             $frac = $active[$heaviest] / $totalWeight;
-            $raw[$heaviest] = max(0.0, min(100.0, round($raw[$heaviest] + $residual / $frac, 2)));
+            $raw[$heaviest] = max(
+                0.0,
+                min(100.0, round($raw[$heaviest] + ($residual / $frac), 2))
+            );
         }
-
-        mt_srand();
 
         foreach ($raw as $key => $value) {
             $out[$key] = $value;

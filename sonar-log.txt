@@ -1,0 +1,37 @@
+02:08:48.520 INFO  Scanner configuration file: C:\Users\HP\Downloads\sonar-scanner-8.0.1.6346-windows-x64\bin\..\conf\sonar-scanner.properties
+02:08:48.526 INFO  Project root configuration file: C:\xampp\htdocs\obe-app (19)\obe-app\sonar-project.properties
+02:08:48.551 INFO  SonarScanner CLI 8.0.1.6346
+02:08:48.560 INFO  Windows 11 10.0 amd64
+02:08:53.903 INFO  Communicating with SonarQube Cloud
+02:08:53.904 INFO  JRE provisioning: os[windows], arch[amd64]
+02:08:57.146 INFO  Starting SonarScanner Engine...
+02:08:57.148 INFO  Java 21.0.9 Eclipse Adoptium (64-bit)
+02:09:03.100 INFO  Load global settings
+02:09:05.481 INFO  Load global settings (done) | time=2366ms
+02:09:05.647 INFO  Server id: 1BD809FA-AWHW8ct9-T_TB3XqouNu
+02:09:06.237 INFO  Loading required plugins
+02:09:06.238 INFO  Load plugins index
+02:09:06.506 INFO  Load plugins index (done) | time=268ms
+02:09:06.506 INFO  Load/download plugins
+02:09:06.608 INFO  Load/download plugins (done) | time=101ms
+02:09:06.984 INFO  Loaded core extensions: architecture, a3s, sca
+02:09:07.414 INFO  Process project properties
+02:09:07.467 INFO  Project key: izzathulmardhiyah274_testing2
+02:09:07.467 INFO  Base dir: C:\xampp\htdocs\obe-app (19)\obe-app
+02:09:07.468 INFO  Working dir: C:\xampp\htdocs\obe-app (19)\obe-app\.scannerwork
+02:09:07.481 INFO  Load project settings for component key: 'izzathulmardhiyah274_testing2'
+02:09:08.076 INFO  Load project settings for component key: 'izzathulmardhiyah274_testing2' (done) | time=595ms
+02:09:09.093 INFO  Check ALM binding of project 'izzathulmardhiyah274_testing2'
+02:09:09.522 INFO  Detected project binding: BOUND
+02:09:09.523 INFO  Check ALM binding of project 'izzathulmardhiyah274_testing2' (done) | time=430ms
+02:09:09.530 INFO  Load branch configuration
+02:09:09.532 INFO  Load branch configuration (done) | time=3ms
+02:09:09.537 INFO  Create analysis
+02:09:10.091 INFO  Create analysis (done) | time=554ms
+02:09:10.536 INFO  Load quality profiles
+02:09:11.001 INFO  Load quality profiles (done) | time=463ms
+02:09:11.642 INFO  Load active rules
+02:09:13.632 INFO  Load active rules (done) | time=1988ms
+02:09:14.865 ERROR You are running manual analysis while Automatic Analysis is enabled. Please consider disabling one or the other.
+02:09:15.230 INFO  EXECUTION FAILURE
+02:09:15.232 INFO  Total time: 26.718s

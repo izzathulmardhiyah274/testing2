@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ClassroomController extends Controller
 {
@@ -23,7 +24,8 @@ class ClassroomController extends Controller
     {
         Classroom::autoArchiveExpired();
 
-        $period      = $activePeriod = $this->activePeriod();
+        $period = $activePeriod = $this->activePeriod();
+
         $years = Classroom::select('academic_year')
             ->whereNotNull('academic_year')
             ->distinct()
@@ -37,9 +39,11 @@ class ClassroomController extends Controller
         if ($filterYear) {
             $query->where('academic_year', $filterYear);
         }
+
         if ($request->filled('period_type')) {
             $query->where('period_type', $request->period_type);
         }
+
         if ($request->filled('semester')) {
             $query->where('semester', $request->semester);
         }
@@ -51,16 +55,16 @@ class ClassroomController extends Controller
             // Admin jurusan: kelas dari jurusannya saja
             $jurusanId = $auth->jurusan_id;
             $query->where(function ($q) use ($jurusanId) {
-                $q->whereHas('lecturer', fn($lq) => $lq->where('jurusan_id', $jurusanId))
-                  ->orWhereHas('cpmkLecturers', fn($lq) => $lq->where('jurusan_id', $jurusanId));
+                $q->whereHas('lecturer', fn ($lq) => $lq->where('jurusan_id', $jurusanId))
+                    ->orWhereHas('cpmkLecturers', fn ($lq) => $lq->where('jurusan_id', $jurusanId));
             });
         } elseif ($auth && $auth->role === 'kaprodi' && $auth->jurusan_id) {
             // Kaprodi: kelas dari jurusannya — dosen lintas prodi dalam jurusan sama tetap
             // bisa mengajar, sehingga scope by jurusan sudah cukup representatif
             $jurusanId = $auth->jurusan_id;
             $query->where(function ($q) use ($jurusanId) {
-                $q->whereHas('lecturer', fn($lq) => $lq->where('jurusan_id', $jurusanId))
-                  ->orWhereHas('cpmkLecturers', fn($lq) => $lq->where('jurusan_id', $jurusanId));
+                $q->whereHas('lecturer', fn ($lq) => $lq->where('jurusan_id', $jurusanId))
+                    ->orWhereHas('cpmkLecturers', fn ($lq) => $lq->where('jurusan_id', $jurusanId));
             });
         }
 
@@ -74,14 +78,14 @@ class ClassroomController extends Controller
         }
         $dosens = $dosenQuery->get();
 
-        $jsCoursesData = $allCourses->map(fn($c) => [
+        $jsCoursesData = $allCourses->map(fn ($c) => [
             'id'   => (string) $c->id,
             'code' => $c->code,
             'name' => $c->name,
             'sem'  => $c->semester,
         ])->values();
 
-        $jsCpmkData = $allCourses->flatMap(fn($c) => $c->cpmks->map(fn($cp) => [
+        $jsCpmkData = $allCourses->flatMap(fn ($c) => $c->cpmks->map(fn ($cp) => [
             'id'        => (string) $cp->id,
             'course_id' => (string) $c->id,
             'code'      => $cp->code,
@@ -90,8 +94,14 @@ class ClassroomController extends Controller
         ]))->values();
 
         return view('kaprodi.classrooms.index', compact(
-            'classrooms', 'years', 'filterYear', 'activePeriod',
-            'allCourses', 'dosens', 'jsCoursesData', 'jsCpmkData'
+            'classrooms',
+            'years',
+            'filterYear',
+            'activePeriod',
+            'allCourses',
+            'dosens',
+            'jsCoursesData',
+            'jsCpmkData'
         ));
     }
 
@@ -109,7 +119,7 @@ class ClassroomController extends Controller
             'course_id'        => 'required|exists:obe_mata_kuliah,id',
             'academic_year'    => 'required|string|max:9',
             'period_type'      => 'required|in:ganjil,genap',
-            'lecturer_id'      => 'nullable|exists:obe_pengguna,id',   // ← tambah
+            'lecturer_id'      => 'nullable|exists:obe_pengguna,id',
             'cpmk_lecturers'   => 'nullable|array',
             'cpmk_lecturers.*' => 'nullable|exists:obe_pengguna,id',
         ]);
@@ -117,14 +127,14 @@ class ClassroomController extends Controller
         $course = Course::findOrFail($validated['course_id']);
         $validated['semester'] = $course->semester;
 
+        // Gunakan generator yang lebih aman daripada rand()/uniqid()/md5()
         do {
-            $code = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+            $code = Str::upper(Str::random(8));
         } while (Classroom::where('enrollment_code', $code)->exists());
 
         $validated['enrollment_code'] = $code;
-        $validated['is_archived']     = false;
+        $validated['is_archived'] = false;
 
-        // ── Perbaikan 2: simpan lecturer_id ke obe_kelas ──────────────
         $classroom = Classroom::create([
             'name'            => $validated['name'],
             'course_id'       => $validated['course_id'],
@@ -133,7 +143,7 @@ class ClassroomController extends Controller
             'semester'        => $validated['semester'],
             'enrollment_code' => $validated['enrollment_code'],
             'is_archived'     => $validated['is_archived'],
-            'lecturer_id'     => $validated['lecturer_id'] ?? null,   // ← tambah
+            'lecturer_id'     => $validated['lecturer_id'] ?? null,
         ]);
 
         if (!empty($validated['cpmk_lecturers'])) {
@@ -162,7 +172,6 @@ class ClassroomController extends Controller
     {
         $classroom->load(['course.cpmks', 'lecturer', 'students', 'cpmks']);
 
-        // ── Dropdown dosen: hanya dosen dari jurusan yang sama ────────────
         $auth = Auth::user();
         $dosenQuery = User::dosenAkademik()->orderBy('name');
         if ($auth && in_array($auth->role, ['admin_jurusan', 'kaprodi']) && $auth->jurusan_id) {
@@ -176,8 +185,7 @@ class ClassroomController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Peta cpmk_id => lecturer_id yang sudah tersimpan
-        $cpmkLecturerMap = $classroom->cpmks->mapWithKeys(fn($cp) => [
+        $cpmkLecturerMap = $classroom->cpmks->mapWithKeys(fn ($cp) => [
             (string) $cp->id => (string) ($cp->pivot->lecturer_id ?? ''),
         ])->toArray();
 
@@ -190,7 +198,7 @@ class ClassroomController extends Controller
         $validated = $request->validate([
             'name'             => 'required|string|max:255',
             'course_id'        => 'required|exists:obe_mata_kuliah,id',
-            'lecturer_id'      => 'nullable|exists:obe_pengguna,id',   // ← tambah
+            'lecturer_id'      => 'nullable|exists:obe_pengguna,id',
             'cpmk_lecturers'   => 'nullable|array',
             'cpmk_lecturers.*' => 'nullable|exists:obe_pengguna,id',
         ]);
@@ -198,16 +206,13 @@ class ClassroomController extends Controller
         $course = Course::findOrFail($validated['course_id']);
         $validated['semester'] = $course->semester;
 
-        // ── Perbaikan 2 (update): simpan lecturer_id ───────────────────
         $classroom->update([
             'name'        => $validated['name'],
             'course_id'   => $validated['course_id'],
             'semester'    => $validated['semester'],
-            'lecturer_id' => $validated['lecturer_id'] ?? null,        // ← tambah
+            'lecturer_id' => $validated['lecturer_id'] ?? null,
         ]);
 
-        // Hanya sync CPMK jika form mengirimkan field cpmk_lecturers
-        // (field ini ada di modal index, tapi tidak ada di halaman edit.blade.php)
         if ($request->has('cpmk_lecturers')) {
             $syncData = [];
             foreach (($validated['cpmk_lecturers'] ?? []) as $cpmkId => $lecturerId) {
@@ -217,13 +222,11 @@ class ClassroomController extends Controller
             }
             $classroom->cpmks()->sync($syncData);
 
-            // Jika request dari halaman edit (bukan modal index), redirect kembali ke edit
             if ($request->headers->get('referer') && str_contains($request->headers->get('referer'), '/edit')) {
                 return redirect()->route('classrooms.edit', $classroom)
                     ->with('success', 'Penugasan CPMK berhasil disimpan.');
             }
         }
-        // Jika 'cpmk_lecturers' tidak ada di request, jangan sentuh penugasan CPMK yang sudah ada
 
         return redirect()->route('classrooms.index')
             ->with('success', 'Kelas berhasil diperbarui.');
@@ -237,8 +240,9 @@ class ClassroomController extends Controller
 
         if ($willArchive) {
             $payload['kaprodi_snapshot'] = auth()->user()?->name;
-            $payload['archived_at']      = now();
+            $payload['archived_at'] = now();
         }
+
         $classroom->update($payload);
 
         $message = $classroom->is_archived
